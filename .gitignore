@@ -1,0 +1,10 @@
+# Source files not needed by the deployed site
+NBY menu.pdf
+design/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
