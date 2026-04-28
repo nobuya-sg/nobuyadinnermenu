@@ -473,7 +473,10 @@ async function loadState() {
   if (c && c.provider === 'jsonbin' && c.jsonbinId) {
     try {
       const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}/latest`;
-      const headers = c.jsonbinKey ? { 'X-Master-Key': c.jsonbinKey } : {};
+      // Send key as both header types so a Master Key or Access Key both work.
+      const headers = c.jsonbinKey
+        ? { 'X-Master-Key': c.jsonbinKey, 'X-Access-Key': c.jsonbinKey }
+        : {};
       const r = await fetch(url, { headers, cache: 'no-store' });
       if (r.ok) {
         const j = await r.json();
