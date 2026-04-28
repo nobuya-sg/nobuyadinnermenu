@@ -626,12 +626,19 @@ function renderItem(baseItem, section) {
           <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
         </div>
         <div class="field">
+          <label>Sizes (under price, e.g. Small / Medium)</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="sizes" value="${htmlEscape(eff.sizes || '')}">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
           <label>Category</label>
           <input data-item="${htmlEscape(baseItem.id)}" data-field="category" value="${htmlEscape(eff.category || '')}">
         </div>
+        <div class="field"></div>
       </div>
       <div class="field">
-        <label>Description / Sizes</label>
+        <label>Description</label>
         <textarea data-item="${htmlEscape(baseItem.id)}" data-field="desc">${htmlEscape(eff.desc || '')}</textarea>
       </div>
     `;
@@ -648,15 +655,9 @@ function renderItem(baseItem, section) {
           <input data-item="${htmlEscape(baseItem.id)}" data-field="price" value="${htmlEscape(eff.price || '')}">
         </div>
       </div>
-      <div class="field-grid">
-        <div class="field jp">
-          <label>Japanese</label>
-          <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
-        </div>
-        <div class="field">
-          <label>Romaji</label>
-          <input data-item="${htmlEscape(baseItem.id)}" data-field="romaji" value="${htmlEscape(eff.romaji || '')}">
-        </div>
+      <div class="field jp">
+        <label>Japanese</label>
+        <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
       </div>
       <div class="field">
         <label>Description</label>

@@ -220,14 +220,6 @@
     white-space: nowrap; overflow: hidden;
     text-overflow: ellipsis;
   }
-  .dish-romaji {
-    font-size: 10px; color: var(--muted);
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    margin-top: 1px;
-    white-space: nowrap; overflow: hidden;
-    text-overflow: ellipsis;
-  }
   .dish-desc {
     font-size: 12px; line-height: 1.45;
     color: var(--ink-soft);
@@ -267,9 +259,22 @@
     border-bottom: 1px dotted var(--hair);
     margin-bottom: 4px;
   }
+  .drink-price-stack {
+    display: flex; flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
   .drink-price {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 13px; color: var(--ink); font-weight: 500;
+    white-space: nowrap;
+  }
+  .drink-sizes {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
     white-space: nowrap;
   }
   .drink-jp {
@@ -510,9 +515,8 @@ function renderDishItem(item) {
           <div class="dish-name">${htmlEscape(item.en)}</div>
           <div class="dish-price">${htmlEscape(item.price)}</div>
         </div>
-        ${item.jp     ? `<div class="dish-jp">${htmlEscape(item.jp)}</div>`             : ''}
-        ${item.romaji ? `<div class="dish-romaji">${htmlEscape(item.romaji)}</div>`     : ''}
-        ${item.desc   ? `<div class="dish-desc">${htmlEscape(item.desc)}</div>`         : ''}
+        ${item.jp   ? `<div class="dish-jp">${htmlEscape(item.jp)}</div>`     : ''}
+        ${item.desc ? `<div class="dish-desc">${htmlEscape(item.desc)}</div>` : ''}
       </div>
     </div>
   `;
@@ -530,7 +534,10 @@ function renderDrinkSection(items) {
         <div class="drink-row">
           <div class="drink-name">${htmlEscape(item.en)}</div>
           <div class="drink-fill"></div>
-          <div class="drink-price">${htmlEscape(item.price)}</div>
+          <div class="drink-price-stack">
+            <div class="drink-price">${htmlEscape(item.price)}</div>
+            ${item.sizes ? `<div class="drink-sizes">${htmlEscape(item.sizes)}</div>` : ''}
+          </div>
         </div>
         ${item.jp   ? `<div class="drink-jp">${htmlEscape(item.jp)}</div>`     : ''}
         ${item.desc ? `<div class="drink-desc">${htmlEscape(item.desc)}</div>` : ''}
