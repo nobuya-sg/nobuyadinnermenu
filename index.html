@@ -468,16 +468,26 @@ function normalizeState(raw) {
   };
 }
 
+/* JSONBin accepts either X-Access-Key or X-Master-Key, but each in
+   isolation — sending both 401s. Try Access Key first (scoped, what
+   most users create), fall back to Master Key on 401. */
+async function jsonbinFetch(url, opts) {
+  const k = MENU.admin.cloud.jsonbinKey;
+  if (!k) return fetch(url, opts);
+  const base = opts || {};
+  let r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Access-Key': k } });
+  if (r.status === 401) {
+    r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Master-Key': k } });
+  }
+  return r;
+}
+
 async function loadState() {
   const c = MENU.admin.cloud;
   if (c && c.provider === 'jsonbin' && c.jsonbinId) {
     try {
       const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}/latest`;
-      // Send key as both header types so a Master Key or Access Key both work.
-      const headers = c.jsonbinKey
-        ? { 'X-Master-Key': c.jsonbinKey, 'X-Access-Key': c.jsonbinKey }
-        : {};
-      const r = await fetch(url, { headers, cache: 'no-store' });
+      const r = await jsonbinFetch(url, { cache: 'no-store' });
       if (r.ok) {
         const j = await r.json();
         const state = normalizeState(j && j.record);

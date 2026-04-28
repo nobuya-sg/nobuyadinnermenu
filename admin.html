@@ -356,15 +356,23 @@ function isCloudConfigured() {
   const c = MENU.admin.cloud;
   return c && c.provider === 'jsonbin' && c.jsonbinId && c.jsonbinKey;
 }
-function jsonbinAuthHeaders() {
+/* JSONBin accepts X-Access-Key OR X-Master-Key but not both at once.
+   Try Access Key first (scoped, what most users create), fall back to
+   Master Key on 401. */
+async function jsonbinFetch(url, opts) {
   const k = MENU.admin.cloud.jsonbinKey;
-  // Send as both header types so Master Keys and Access Keys both work.
-  return k ? { 'X-Master-Key': k, 'X-Access-Key': k } : {};
+  if (!k) return fetch(url, opts);
+  const base = opts || {};
+  let r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Access-Key': k } });
+  if (r.status === 401) {
+    r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Master-Key': k } });
+  }
+  return r;
 }
 async function fetchCloud() {
   const c = MENU.admin.cloud;
   const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}/latest`;
-  const r = await fetch(url, { headers: jsonbinAuthHeaders(), cache: 'no-store' });
+  const r = await jsonbinFetch(url, { cache: 'no-store' });
   if (!r.ok) {
     const text = await r.text().catch(() => '');
     throw new Error('JSONBin fetch failed: ' + r.status + ' ' + text);
@@ -375,9 +383,9 @@ async function fetchCloud() {
 async function pushCloud(data) {
   const c = MENU.admin.cloud;
   const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}`;
-  const r = await fetch(url, {
+  const r = await jsonbinFetch(url, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...jsonbinAuthHeaders() },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
   if (!r.ok) {
