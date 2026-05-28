@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#F5F2EC">
+<meta name="description" content="Nobu-Ya menu">
+<title>Nobu-Ya — Menu</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #F5F2EC;
+    --bg-alt:    #EBE6DC;
+    --bg-alt-2: #E3DED3;
+    --ink:       #1A1816;
+    --ink-soft:  #4A4640;
+    --muted:     #8A847A;
+    --hair:      rgba(26,24,22,0.12);
+    --accent:    #8B2A1F;
+
+    --max-width: 480px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+  button { font-family: inherit; }
+
+  .page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    background: var(--bg);
+    min-height: 100vh;
+    min-height: 100svh;
+    position: relative;
+  }
+
+  /* ── Top sticky nav ──────────────────────────────────────── */
+  .topnav {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(245,242,236,0.92);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid var(--hair);
+    transform: translateY(-100%);
+    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  .topnav.visible { transform: translateY(0); }
+  .topnav-inner {
+    display: flex; gap: 6px;
+    padding: 10px 16px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .topnav-inner::-webkit-scrollbar { display: none; }
+
+  .chip {
+    flex-shrink: 0;
+    border: none; cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 12px; font-weight: 500;
+    letter-spacing: -0.1px;
+    display: flex; align-items: center; gap: 6px;
+    transition: background 180ms, color 180ms;
+  }
+  .chip.active { background: var(--ink); color: var(--bg); }
+  .chip-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; opacity: 0.65;
+  }
+
+  /* ── Cover ───────────────────────────────────────────────── */
+  .cover {
+    padding: calc(48px + env(safe-area-inset-top, 0)) 28px 56px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .cover-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px; color: var(--muted);
+    margin-bottom: 4px; letter-spacing: 4px;
+  }
+  .cover-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 72px; line-height: 0.95;
+    letter-spacing: -2px;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .cover-title .accent { color: var(--accent); }
+  .cover-tagline {
+    font-size: 13px; line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    max-width: 320px;
+    letter-spacing: -0.1px;
+  }
+  .cover-info {
+    margin-top: 28px;
+    font-size: 11px; line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .cover-info .label {
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 14px 0 4px;
+  }
+  .cover-meta {
+    display: flex; gap: 16px;
+    margin-top: 36px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── Section ─────────────────────────────────────────────── */
+  .section { background: var(--bg); scroll-margin-top: 70px; }
+  .section-header { padding: 40px 28px 20px; }
+  .section-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 1.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-name {
+    font-size: 34px; line-height: 1.05;
+    letter-spacing: -1.2px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .section-sub {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px; color: var(--muted);
+    margin-top: 6px;
+  }
+  .section-rule {
+    height: 1px; background: var(--ink);
+    margin-top: 22px; width: 32px;
+  }
+
+  /* ── Dish grid ───────────────────────────────────────────── */
+  .dish-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 14px;
+    padding: 0 20px 44px;
+  }
+  .dish { min-width: 0; }
+
+  .dish-photo {
+    width: 100%; aspect-ratio: 1 / 1;
+    overflow: hidden; position: relative;
+    background:
+      repeating-linear-gradient(135deg,
+        var(--bg-alt) 0px, var(--bg-alt) 10px,
+        var(--bg-alt-2) 10px, var(--bg-alt-2) 20px);
+  }
+  .dish-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .dish-photo .placeholder-tag {
+    position: absolute; inset: 0; margin: auto;
+    width: max-content; height: max-content;
+    display: flex; align-items: center;
+    background: var(--bg);
+    padding: 6px 10px;
+    border: 1px solid var(--hair);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .dish-meta { margin-top: 12px; }
+  .dish-row {
+    display: flex; align-items: baseline;
+    justify-content: space-between; gap: 8px;
+  }
+  .dish-name {
+    font-size: 15px; line-height: 1.2;
+    font-weight: 600; letter-spacing: -0.3px;
+    color: var(--ink); flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dish-price {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; color: var(--ink);
+    font-weight: 500; flex-shrink: 0;
+  }
+  .dish-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1px; margin-top: 3px;
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dish-desc {
+    font-size: 12px; line-height: 1.45;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+    margin-top: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Drinks list ─────────────────────────────────────────── */
+  .list-wrap { padding-bottom: 24px; }
+  .drink-divider {
+    padding: 24px 28px 10px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .drink {
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .drink:last-child { border-bottom: none; }
+  .drink-row {
+    display: flex; align-items: baseline;
+    justify-content: space-between; gap: 16px;
+  }
+  .drink-name {
+    font-size: 15px; font-weight: 500;
+    letter-spacing: -0.2px; color: var(--ink);
+  }
+  .drink-fill {
+    flex: 1;
+    border-bottom: 1px dotted var(--hair);
+    margin-bottom: 4px;
+  }
+  .drink-price-stack {
+    display: flex; flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .drink-price {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px; color: var(--ink); font-weight: 500;
+    white-space: nowrap;
+  }
+  .drink-sizes {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .drink-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px; color: var(--muted);
+    margin-top: 2px;
+  }
+  .drink-desc {
+    font-size: 12px; color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── Sake item ───────────────────────────────────────────── */
+  .sake {
+    padding: 18px 28px 20px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .sake:last-child { border-bottom: none; }
+  .sake-name {
+    font-size: 15px; font-weight: 500;
+    letter-spacing: -0.2px; color: var(--ink);
+  }
+  .sake-jp {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px; color: var(--muted); margin-top: 2px;
+  }
+  .sake-desc {
+    font-size: 12px; color: var(--muted);
+    margin-top: 6px; line-height: 1.45;
+  }
+  .sake-prices {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px; margin-top: 12px;
+  }
+  .sake-price-cell {
+    display: flex; flex-direction: column;
+    align-items: flex-start;
+  }
+  .sake-size {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .sake-price {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px; font-weight: 500;
+    color: var(--ink); margin-top: 2px;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────── */
+  .footer {
+    padding: 56px 28px calc(40px + env(safe-area-inset-bottom, 0));
+    border-top: 1px solid var(--hair);
+    text-align: center;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── FAB + bottom sheet ──────────────────────────────────── */
+  .fab {
+    position: fixed; z-index: 45;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    left: 50%;
+    transform: translateX(-50%);
+    border: none; cursor: pointer;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: -0.1px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18), 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .fab svg { display: block; }
+
+  .sheet-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(26,24,22,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end;
+    visibility: hidden; opacity: 0;
+    transition: opacity 220ms, visibility 0s linear 220ms;
+  }
+  .sheet-overlay.open {
+    visibility: visible; opacity: 1;
+    transition: opacity 220ms, visibility 0s;
+  }
+  .sheet {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    background: var(--bg);
+    border-radius: 28px 28px 0 0;
+    padding: 12px 0 calc(40px + env(safe-area-inset-bottom, 0));
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 320ms cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .sheet-overlay.open .sheet { transform: translateY(0); }
+
+  .sheet-handle {
+    width: 40px; height: 4px; border-radius: 2px;
+    background: var(--hair);
+    margin: 0 auto 20px;
+  }
+  .sheet-title {
+    padding: 0 28px 16px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 1.8px;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .sheet-row {
+    width: 100%; border: none;
+    background: transparent; cursor: pointer;
+    text-align: left; padding: 16px 28px;
+    border-bottom: 1px solid var(--hair);
+    display: flex; align-items: baseline; gap: 16px;
+  }
+  .sheet-row:first-of-type { border-top: 1px solid var(--hair); }
+  .sheet-row-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; color: var(--muted); letter-spacing: 1px;
+  }
+  .sheet-row-name {
+    flex: 1;
+    font-size: 18px; font-weight: 500;
+    letter-spacing: -0.4px; color: var(--ink);
+  }
+  .sheet-row-count {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1.2px;
+  }
+
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 60vh;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <div class="loading">Loading…</div>
+</div>
+
+<script src="menu.js"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────
+   App state schema (stored in localStorage and JSONBin):
+   {
+     version: 2,
+     hidden:    { '<itemId>': true, ... },           // hidden today
+     overrides: { '<itemId>': { en?, jp?, romaji?, category?, desc?, price?, image?, prices? }, ... }
+   }
+   ───────────────────────────────────────────────────────────── */
+
+const STORAGE_KEY = 'nby:state';
+
+function htmlEscape(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function safeImageUrl(path) {
+  if (!path) return '';
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
+function emptyState() {
+  return { version: 3, hidden: {}, overrides: {}, added: [] };
+}
+
+function normalizeState(raw) {
+  if (!raw || typeof raw !== 'object') return emptyState();
+  return {
+    version: 3,
+    hidden:    (raw.hidden    && typeof raw.hidden    === 'object') ? raw.hidden    : {},
+    overrides: (raw.overrides && typeof raw.overrides === 'object') ? raw.overrides : {},
+    added:     Array.isArray(raw.added) ? raw.added : [],
+  };
+}
+
+/* Returns a section's items with any admin-added dishes for that
+   section appended. Added dishes are plain dish items tagged with
+   their sectionId in state.added. */
+function sectionItemsWithAdded(section, state) {
+  const extra = (state.added || [])
+    .filter(a => a.sectionId === section.id)
+    .map(a => ({ id: a.id, en: a.en, jp: a.jp, desc: a.desc, price: a.price, image: a.image }));
+  return [...section.items, ...extra];
+}
+
+/* JSONBin accepts either X-Access-Key or X-Master-Key, but each in
+   isolation — sending both 401s. Try Access Key first (scoped, what
+   most users create), fall back to Master Key on 401. */
+async function jsonbinFetch(url, opts) {
+  const k = MENU.admin.cloud.jsonbinKey;
+  if (!k) return fetch(url, opts);
+  const base = opts || {};
+  let r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Access-Key': k } });
+  if (r.status === 401) {
+    r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Master-Key': k } });
+  }
+  return r;
+}
+
+async function loadState() {
+  const c = MENU.admin.cloud;
+  if (c && c.provider === 'jsonbin' && c.jsonbinId) {
+    try {
+      const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}/latest`;
+      const r = await jsonbinFetch(url, { cache: 'no-store' });
+      if (r.ok) {
+        const j = await r.json();
+        const state = normalizeState(j && j.record);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        return state;
+      }
+    } catch (e) {
+      console.warn('Cloud fetch failed; falling back to local:', e);
+    }
+  }
+  try {
+    return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'));
+  } catch (e) {
+    return emptyState();
+  }
+}
+
+function applyOverrides(item, state) {
+  const o = state.overrides[item.id];
+  if (!o) return item;
+  return { ...item, ...o };
+}
+
+function isHidden(item, state) {
+  return state.hidden[item.id] === true;
+}
+
+/* ── Renderers ──────────────────────────────────────────────── */
+function renderDishItem(item) {
+  const photo = item.image
+    ? `<img src="${htmlEscape(safeImageUrl(item.image))}" alt="${htmlEscape(item.en)}" loading="lazy">`
+    : `<span class="placeholder-tag">photo</span>`;
+  return `
+    <div class="dish">
+      <div class="dish-photo">${photo}</div>
+      <div class="dish-meta">
+        <div class="dish-row">
+          <div class="dish-name">${htmlEscape(item.en)}</div>
+          <div class="dish-price">${htmlEscape(item.price)}</div>
+        </div>
+        ${item.jp   ? `<div class="dish-jp">${htmlEscape(item.jp)}</div>`     : ''}
+        ${item.desc ? `<div class="dish-desc">${htmlEscape(item.desc)}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderDrinkSection(items) {
+  let prevCat = null;
+  return items.map((item) => {
+    const cat = item.category || '';
+    const showDivider = cat && cat !== prevCat;
+    prevCat = cat;
+    return `
+      ${showDivider ? `<div class="drink-divider">— ${htmlEscape(cat)} —</div>` : ''}
+      <div class="drink">
+        <div class="drink-row">
+          <div class="drink-name">${htmlEscape(item.en)}</div>
+          <div class="drink-fill"></div>
+          <div class="drink-price-stack">
+            <div class="drink-price">${htmlEscape(item.price)}</div>
+            ${item.sizes ? `<div class="drink-sizes">${htmlEscape(item.sizes)}</div>` : ''}
+          </div>
+        </div>
+        ${item.jp   ? `<div class="drink-jp">${htmlEscape(item.jp)}</div>`     : ''}
+        ${item.desc ? `<div class="drink-desc">${htmlEscape(item.desc)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSakeItem(item) {
+  const cells = (item.prices || []).map(p => `
+    <div class="sake-price-cell">
+      <div class="sake-size">${htmlEscape(p.size)}</div>
+      <div class="sake-price">${htmlEscape(p.price)}</div>
+    </div>
+  `).join('');
+  return `
+    <div class="sake">
+      <div class="sake-name">${htmlEscape(item.en)}</div>
+      ${item.jp   ? `<div class="sake-jp">${htmlEscape(item.jp)}</div>`     : ''}
+      ${item.desc ? `<div class="sake-desc">${htmlEscape(item.desc)}</div>` : ''}
+      <div class="sake-prices">${cells}</div>
+    </div>
+  `;
+}
+
+function renderSection(section, state) {
+  const items = sectionItemsWithAdded(section, state)
+    .filter(it => !isHidden(it, state))
+    .map(it => applyOverrides(it, state));
+  if (items.length === 0) return '';
+
+  let body;
+  if (section.kind === 'dish') {
+    body = `<div class="dish-grid">${items.map(renderDishItem).join('')}</div>`;
+  } else if (section.kind === 'sake') {
+    body = `<div class="list-wrap">${items.map(renderSakeItem).join('')}</div>`;
+  } else {
+    body = `<div class="list-wrap">${renderDrinkSection(items)}</div>`;
+  }
+
+  return `
+    <section class="section" id="sec-${htmlEscape(section.id)}" data-section-id="${htmlEscape(section.id)}">
+      <div class="section-header">
+        <div class="section-num">${htmlEscape(section.number)}</div>
+        <div class="section-name">${htmlEscape(section.name)}</div>
+        <div class="section-sub">${htmlEscape(section.subtitle || '')}</div>
+        <div class="section-rule"></div>
+      </div>
+      ${body}
+    </section>
+  `;
+}
+
+function render(state) {
+  const r = MENU.restaurant;
+  const parts = r.name.split(r.accentChar || '-');
+  const titleHtml = parts.map(htmlEscape).join(`<span class="accent">${htmlEscape(r.accentChar || '-')}</span>`);
+
+  const sectionsHtml = MENU.sections
+    .map(s => renderSection(s, state))
+    .filter(Boolean)
+    .join('');
+
+  const visibleSections = MENU.sections.filter(s => sectionItemsWithAdded(s, state).some(it => !isHidden(it, state)));
+
+  const navHtml = visibleSections.map(s => `
+    <button class="chip" data-section="${htmlEscape(s.id)}">
+      <span class="chip-num">${htmlEscape(s.number)}</span>
+      <span>${htmlEscape(s.name)}</span>
+    </button>
+  `).join('');
+
+  const sheetHtml = visibleSections.map(s => {
+    const visibleCount = sectionItemsWithAdded(s, state).filter(it => !isHidden(it, state)).length;
+    return `
+      <button class="sheet-row" data-section="${htmlEscape(s.id)}">
+        <span class="sheet-row-num">${htmlEscape(s.number)}</span>
+        <span class="sheet-row-name">${htmlEscape(s.name)}</span>
+        <span class="sheet-row-count">${visibleCount} item${visibleCount === 1 ? '' : 's'}</span>
+      </button>
+    `;
+  }).join('');
+
+  const hoursHtml = (r.hours || []).map(h => htmlEscape(h)).join('<br>');
+  const locationsHtml = (r.locations || []).map(l => htmlEscape(l)).join('<br>');
+
+  document.getElementById('page').innerHTML = `
+    <nav class="topnav" id="topnav">
+      <div class="topnav-inner" id="topnav-inner">${navHtml}</div>
+    </nav>
+
+    <header class="cover">
+      ${r.jpName ? `<div class="cover-jp">${htmlEscape(r.jpName)}</div>` : ''}
+      <h1 class="cover-title">${titleHtml}</h1>
+      <p class="cover-tagline">${htmlEscape(r.tagline || '')}</p>
+      ${(r.hours || r.locations) ? `
+        <div class="cover-info">
+          ${r.hours && r.hours.length ? `
+            <span class="label">Opening Hours</span>${hoursHtml}
+          ` : ''}
+          ${r.locations && r.locations.length ? `
+            <span class="label">Seating</span>${locationsHtml}
+          ` : ''}
+        </div>
+      ` : ''}
+      <div class="cover-meta">
+        <span>${htmlEscape(r.edition || 'Menu')}</span>
+      </div>
+    </header>
+
+    ${sectionsHtml}
+
+    <footer class="footer">${htmlEscape(r.footerNote || '')}</footer>
+
+    <button class="fab" id="fab" aria-label="Open category list">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <line x1="1" y1="3" x2="11" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1" y1="9" x2="11" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Categories
+    </button>
+
+    <div class="sheet-overlay" id="sheet-overlay" aria-hidden="true">
+      <div class="sheet" role="dialog" aria-label="Categories">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Categories</div>
+        ${sheetHtml}
+      </div>
+    </div>
+  `;
+
+  wireUpInteractions();
+}
+
+function wireUpInteractions() {
+  const topnav = document.getElementById('topnav');
+  const topnavInner = document.getElementById('topnav-inner');
+  const fab = document.getElementById('fab');
+  const sheetOverlay = document.getElementById('sheet-overlay');
+
+  const jumpTo = (id) => {
+    const el = document.getElementById('sec-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  document.querySelectorAll('[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      jumpTo(btn.dataset.section);
+      sheetOverlay.classList.remove('open');
+    });
+  });
+
+  fab.addEventListener('click', () => sheetOverlay.classList.add('open'));
+  sheetOverlay.addEventListener('click', (e) => {
+    if (e.target === sheetOverlay) sheetOverlay.classList.remove('open');
+  });
+
+  const sections = Array.from(document.querySelectorAll('.section'));
+  const onScroll = () => {
+    const scrollY = window.scrollY;
+    topnav.classList.toggle('visible', scrollY > 200);
+
+    let activeId = sections[0] && sections[0].dataset.sectionId;
+    for (const s of sections) {
+      const rect = s.getBoundingClientRect();
+      if (rect.top - 80 <= 0) activeId = s.dataset.sectionId;
+    }
+    document.querySelectorAll('.chip').forEach(c => {
+      const isActive = c.dataset.section === activeId;
+      c.classList.toggle('active', isActive);
+      if (isActive) {
+        const navRect = topnavInner.getBoundingClientRect();
+        const chipRect = c.getBoundingClientRect();
+        const offset = (chipRect.left - navRect.left) - (navRect.width - chipRect.width) / 2;
+        topnavInner.scrollTo({ left: topnavInner.scrollLeft + offset, behavior: 'smooth' });
+      }
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+(async function init() {
+  if (!window.MENU) {
+    document.getElementById('page').innerHTML =
+      '<div class="loading">menu.js failed to load</div>';
+    return;
+  }
+  const state = await loadState();
+  render(state);
+})();
+</script>
+</body>
+</html>
