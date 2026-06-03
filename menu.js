@@ -204,6 +204,7 @@ window.MENU = {
         // Non-Alcoholic
         { id: 'coke-zero', category: 'Non-Alcoholic', en: 'Coke Zero', jp: 'ゼロコーラ', desc: '',                                                          price: '6' },
         { id: 'lemonade',  category: 'Non-Alcoholic', en: 'Lemonade',  jp: 'レモネード', desc: '',                                                          price: '6' },
+        { id: 'calpis',  category: 'Non-Alcoholic', en: 'Calpis Soda',  jp: 'カルピスソーダ', desc: '',                                                    price: '6' },
         { id: 'coke',      category: 'Non-Alcoholic', en: 'Coke',      jp: 'コーラ',     desc: '',                                                          price: '5' },
         { id: 'tea',       category: 'Non-Alcoholic', en: 'Tea',       jp: 'お茶',       desc: '*Not chargeable for guests drinking alcohol',               price: '4' },
       ],
