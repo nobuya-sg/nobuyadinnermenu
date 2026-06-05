@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F2EC">
+<meta name="robots" content="noindex,nofollow">
+<title>Nobu-Ya — Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:        #F5F2EC;
+    --bg-alt:    #EBE6DC;
+    --bg-alt-2: #E3DED3;
+    --ink:       #1A1816;
+    --ink-soft:  #4A4640;
+    --muted:     #8A847A;
+    --hair:      rgba(26,24,22,0.12);
+    --accent:    #8B2A1F;
+    --on:        #2E7D32;
+    --off:       #B71C1C;
+    --edited:    #C97A00;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  button, input, textarea, select { font-family: inherit; color: inherit; }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: calc(28px + env(safe-area-inset-top, 0)) 16px calc(140px + env(safe-area-inset-bottom, 0));
+  }
+
+  /* ── Header ──────────────────────────────────────────────── */
+  .h-eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    font-size: 28px; font-weight: 600;
+    letter-spacing: -0.8px;
+    margin: 6px 0 6px;
+  }
+  .h-help {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 20px;
+  }
+
+  /* ── Status / sync row ───────────────────────────────────── */
+  .status-bar {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 8px; border-radius: 999px;
+    background: var(--bg-alt); color: var(--ink-soft);
+  }
+  .badge.cloud { background: #E1F0E4; color: var(--on); }
+  .badge.local { background: #FBE7E7; color: var(--off); }
+  .badge.dirty { background: #FFF3DD; color: var(--edited); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── Login ───────────────────────────────────────────────── */
+  .login {
+    background: #fff; border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 360px; margin: 40px auto 0;
+  }
+  .login label {
+    display: block; font-size: 12px;
+    color: var(--muted); letter-spacing: 0.5px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .login input {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+    font-size: 16px;
+    background: var(--bg);
+  }
+  .login input:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
+  .login button {
+    margin-top: 14px; width: 100%;
+    padding: 12px;
+    background: var(--ink); color: var(--bg);
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .login .err {
+    margin-top: 10px; font-size: 12px; color: var(--off);
+    min-height: 1em;
+  }
+
+  /* ── Section block ───────────────────────────────────────── */
+  .sec-block { margin: 28px 0 18px; }
+  .sec-title {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 12px;
+  }
+  .sec-title-name {
+    font-size: 18px; font-weight: 600; letter-spacing: -0.4px;
+  }
+  .sec-title-meta {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 1.4px; text-transform: uppercase;
+  }
+
+  /* ── Item card ───────────────────────────────────────────── */
+  .item {
+    background: #fff;
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 12px 12px 12px 28px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    align-items: start;
+    position: relative;
+  }
+  .item.is-hidden { opacity: 0.55; }
+  .item.is-edited { border-color: var(--edited); }
+  .item-thumb {
+    grid-row: 1 / span 2;
+    width: 64px; height: 64px;
+    border-radius: 8px; overflow: hidden;
+    background:
+      repeating-linear-gradient(135deg,
+        var(--bg-alt) 0px, var(--bg-alt) 5px,
+        var(--bg-alt-2) 5px, var(--bg-alt-2) 10px);
+  }
+  .item-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .item-head {
+    grid-column: 2;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 8px;
+  }
+  .item-id {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.2px;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .item-edited-badge {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 1.2px;
+    color: var(--edited);
+    text-transform: uppercase;
+  }
+  .item-edited-badge.hidden-vis { display: none; }
+
+  .toggle {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+    align-self: center;
+    position: relative; width: 50px; height: 30px;
+    flex-shrink: 0; cursor: pointer; user-select: none;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle .track {
+    position: absolute; inset: 0;
+    background: #C9C5BC;
+    border-radius: 999px;
+    transition: background 200ms;
+  }
+  .toggle .knob {
+    position: absolute; top: 3px; left: 3px;
+    width: 24px; height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform 200ms;
+  }
+  .toggle input:checked + .track { background: var(--on); }
+  .toggle input:checked + .track + .knob { transform: translateX(20px); }
+
+  .item-body {
+    grid-column: 2 / span 2;
+    display: grid;
+    gap: 8px;
+  }
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    gap: 8px;
+  }
+  .field {
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .field label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; color: var(--muted);
+    letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--hair);
+    border-radius: 7px;
+    font-size: 13px;
+    background: var(--bg);
+    transition: border-color 150ms, background 150ms;
+  }
+  .field.jp input { font-family: 'Noto Serif JP', serif; }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: #fff;
+  }
+  .field textarea { resize: vertical; min-height: 44px; line-height: 1.4; }
+
+  /* Sake price row */
+  .sake-prices-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .item-actions {
+    display: flex; justify-content: flex-end; gap: 12px;
+    padding-top: 4px;
+  }
+  .item-actions a {
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: underline dotted;
+    cursor: pointer;
+  }
+  .item-actions a:hover { color: var(--ink); }
+
+  /* ── Bottom action bar ───────────────────────────────────── */
+  .actionbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(245,242,236,0.95);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border-top: 1px solid var(--hair);
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0));
+    display: flex; gap: 10px; justify-content: center;
+  }
+  .actionbar-inner {
+    display: flex; gap: 10px; width: 100%; max-width: 720px;
+  }
+  .btn {
+    flex: 1;
+    padding: 14px 16px;
+    border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: opacity 150ms, transform 100ms;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink); border: 1px solid var(--hair);
+  }
+  .btn-warn {
+    background: transparent;
+    color: var(--off); border: 1px solid var(--hair);
+  }
+
+  /* ── Toast ───────────────────────────────────────────────── */
+  .toast {
+    position: fixed; left: 50%; bottom: 110px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--bg);
+    padding: 10px 16px; border-radius: 999px;
+    font-size: 13px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    opacity: 0; pointer-events: none;
+    transition: opacity 200ms, transform 200ms;
+    z-index: 60;
+    max-width: 80vw;
+    text-align: center;
+  }
+  .toast.show {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+  .toast.error { background: var(--off); }
+
+  /* ── Add-dish button ─────────────────────────────────────── */
+  .add-dish-btn {
+    width: 100%;
+    margin-top: 2px;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed var(--hair);
+    border-radius: 12px;
+    color: var(--ink-soft);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: border-color 150ms, color 150ms, background 150ms;
+  }
+  .add-dish-btn:hover { border-color: var(--ink); color: var(--ink); background: #fff; }
+  .add-dish-btn:active { transform: scale(0.99); }
+
+  /* ── Added-dish card accent ──────────────────────────────── */
+  .item.is-added { border-color: var(--on); border-style: dashed; }
+  .item.is-added .item-id { color: var(--on); }
+
+  /* ── AI photo control ────────────────────────────────────── */
+  .ai-photo {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-top: 2px;
+  }
+  .ai-photo-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg-alt);
+    border: 1px solid var(--hair);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 150ms, color 150ms;
+  }
+  .ai-photo-btn:hover { background: #fff; color: var(--ink); }
+  .ai-photo-status {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+  .ai-photo-status.busy { color: var(--edited); }
+  .ai-photo-status.ok   { color: var(--on); }
+  .ai-photo-status.err  { color: var(--off); }
+
+  /* ── Reorder arrows ──────────────────────────────────────── */
+  .reorder {
+    position: absolute;
+    left: 2px; top: 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .reorder-btn {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-alt);
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-size: 9px; line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    transition: background 120ms, color 120ms, border-color 120ms;
+  }
+  .reorder-btn:hover { background: #fff; color: var(--ink); border-color: var(--ink); }
+  .reorder-btn:active { transform: scale(0.92); }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+  <div style="text-align:center; color:var(--muted); margin-top:40vh; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;">Loading…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="menu.js"></script>
+<script>
+const STORAGE_KEY = 'nby:state';
+const SESSION_KEY = 'nby:admin-session';
+
+/* Editable state — applied on top of the menu.js source data.
+   { hidden: { id: true },
+     overrides: { id: { en?, jp?, romaji?, category?, desc?, price?, image?, prices?, sizes? } },
+     added: [ { id, sectionId, kind, ...kind-specific fields } ],  // new items created in admin
+     order: { sectionId: [ itemId, itemId, ... ] }                  // custom display order per section
+   } */
+let state = { version: 4, hidden: {}, overrides: {}, added: [], order: {} };
+
+/* Worker endpoint for the AI photo pipeline.
+   Paste your deployed Cloudflare Worker URL here after setup.
+   Leave '' to hide the AI photo button entirely. */
+const PHOTO_WORKER_URL = 'https://hardestnbyworker.yizhiloh.workers.dev';
+let savedState = null;   // last successfully saved snapshot, for dirty-check
+let dirty = false;
+
+function htmlEscape(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+function safeImageUrl(path) {
+  if (!path) return '';
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+function deepClone(x) { return JSON.parse(JSON.stringify(x)); }
+function isEqual(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+
+function showToast(msg, kind) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', kind === 'error');
+  t.classList.add('show');
+  clearTimeout(showToast._tid);
+  showToast._tid = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ── Cloud sync ────────────────────────────────────────────── */
+function isCloudConfigured() {
+  const c = MENU.admin.cloud;
+  return c && c.provider === 'jsonbin' && c.jsonbinId && c.jsonbinKey;
+}
+/* JSONBin accepts X-Access-Key OR X-Master-Key but not both at once.
+   Try Access Key first (scoped, what most users create), fall back to
+   Master Key on 401. */
+async function jsonbinFetch(url, opts) {
+  const k = MENU.admin.cloud.jsonbinKey;
+  if (!k) return fetch(url, opts);
+  const base = opts || {};
+  let r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Access-Key': k } });
+  if (r.status === 401) {
+    r = await fetch(url, { ...base, headers: { ...(base.headers || {}), 'X-Master-Key': k } });
+  }
+  return r;
+}
+async function fetchCloud() {
+  const c = MENU.admin.cloud;
+  const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}/latest`;
+  const r = await jsonbinFetch(url, { cache: 'no-store' });
+  if (!r.ok) {
+    const text = await r.text().catch(() => '');
+    throw new Error('JSONBin fetch failed: ' + r.status + ' ' + text);
+  }
+  const j = await r.json();
+  return (j && j.record && typeof j.record === 'object') ? j.record : {};
+}
+async function pushCloud(data) {
+  const c = MENU.admin.cloud;
+  const url = `https://api.jsonbin.io/v3/b/${c.jsonbinId}`;
+  const r = await jsonbinFetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!r.ok) {
+    const text = await r.text().catch(() => '');
+    throw new Error('JSONBin save failed: ' + r.status + ' ' + text);
+  }
+}
+
+function normalizeState(raw) {
+  if (!raw || typeof raw !== 'object') return { version: 4, hidden: {}, overrides: {}, added: [], order: {} };
+  return {
+    version: 4,
+    hidden:    (raw.hidden    && typeof raw.hidden    === 'object') ? raw.hidden    : {},
+    overrides: (raw.overrides && typeof raw.overrides === 'object') ? raw.overrides : {},
+    added:     Array.isArray(raw.added) ? raw.added : [],
+    order:     (raw.order     && typeof raw.order     === 'object') ? raw.order     : {},
+  };
+}
+
+async function loadState() {
+  if (isCloudConfigured()) {
+    try {
+      const data = await fetchCloud();
+      const norm = normalizeState(data);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(norm));
+      return norm;
+    } catch (e) {
+      console.warn('Cloud load failed; using local cache:', e);
+      showToast('Cloud unreachable — using local copy', 'error');
+    }
+  }
+  try { return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); }
+  catch (e) { return { version: 4, hidden: {}, overrides: {}, added: [], order: {} }; }
+}
+
+async function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if (isCloudConfigured()) await pushCloud(state);
+}
+
+/* ── Auth gate ─────────────────────────────────────────────── */
+function isAuthed() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
+function setAuthed() { sessionStorage.setItem(SESSION_KEY, '1'); }
+
+function renderLogin() {
+  document.getElementById('page').innerHTML = `
+    <div class="login">
+      <div class="h-eyebrow">Nobu-Ya · Admin</div>
+      <h1 style="margin-top:8px;">Sign in</h1>
+      <p class="h-help">Enter the admin password to manage today’s menu.</p>
+      <label for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" autofocus />
+      <div class="err" id="err"></div>
+      <button id="login-btn">Continue</button>
+    </div>
+  `;
+  const submit = () => {
+    const pw = document.getElementById('pw').value;
+    if (pw && pw === MENU.admin.password) {
+      setAuthed();
+      sessionStorage.setItem('nby:admin-pw', pw);
+      mountAdmin();
+    } else {
+      document.getElementById('err').textContent = 'Wrong password.';
+    }
+  };
+  document.getElementById('login-btn').addEventListener('click', submit);
+  document.getElementById('pw').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submit();
+  });
+}
+
+/* ── Override helpers ──────────────────────────────────────── */
+
+/* Added dishes live in state.added, tagged with sectionId.
+   This returns the menu sections with each section's added items
+   appended, so the rest of the admin treats them uniformly. */
+function mergedSections() {
+  return MENU.sections.map(sec => {
+    const extra = state.added
+      .filter(a => a.sectionId === sec.id)
+      .map(a => {
+        const { sectionId, kind, ...fields } = a;
+        return { ...fields, _added: true };
+      });
+    return { ...sec, items: [...sec.items, ...extra] };
+  });
+}
+
+/* Returns a section's items (originals + added) sorted by the saved
+   custom order in state.order[sectionId]. Items not in the saved list
+   keep their natural order and are appended after the ordered ones. */
+function orderedItems(section) {
+  const items = section.items;
+  const ord = state.order[section.id];
+  if (!Array.isArray(ord) || ord.length === 0) return items;
+  const byId = new Map(items.map(it => [it.id, it]));
+  const result = [];
+  ord.forEach(id => { if (byId.has(id)) { result.push(byId.get(id)); byId.delete(id); } });
+  byId.forEach(it => result.push(it)); // anything new/unlisted goes last
+  return result;
+}
+
+/* Persist the current DOM order of a section back into state.order. */
+function saveSectionOrder(sectionId, idsInOrder) {
+  state.order[sectionId] = idsInOrder;
+  markDirty();
+}
+function isAdded(itemId) { return state.added.some(a => a.id === itemId); }
+function findAdded(itemId) { return state.added.find(a => a.id === itemId); }
+
+function findItem(itemId) {
+  for (const sec of MENU.sections) {
+    for (const it of sec.items) {
+      if (it.id === itemId) return { item: it, section: sec };
+    }
+  }
+  // added items: synthesize a base record so effective()/overrides work
+  const a = findAdded(itemId);
+  if (a) {
+    const sec = MENU.sections.find(s => s.id === a.sectionId) || MENU.sections[0];
+    const { sectionId, kind, ...fields } = a;
+    return { item: { ...fields }, section: sec, added: true };
+  }
+  return null;
+}
+function effective(item) {
+  const o = state.overrides[item.id];
+  return o ? { ...item, ...o } : item;
+}
+function hasOverride(itemId) {
+  const o = state.overrides[itemId];
+  return !!o && Object.keys(o).length > 0;
+}
+
+/* When admin types into a field: compare to the base value.
+   If they typed the base value, drop the override key (cleaner state). */
+function setOverrideField(itemId, field, value) {
+  // Added dishes are edited in place (they have no PDF default to override).
+  if (isAdded(itemId)) {
+    const a = findAdded(itemId);
+    if (a) { a[field] = value; markDirty(); }
+    return;
+  }
+  const found = findItem(itemId);
+  if (!found) return;
+  const base = found.item[field];
+  const baseVal = base === undefined ? '' : base;
+  const cur = state.overrides[itemId] || {};
+  if (value === baseVal) {
+    delete cur[field];
+  } else {
+    cur[field] = value;
+  }
+  if (Object.keys(cur).length === 0) {
+    delete state.overrides[itemId];
+  } else {
+    state.overrides[itemId] = cur;
+  }
+  markDirty();
+}
+function setOverridePrice(itemId, idx, value) {
+  const found = findItem(itemId);
+  if (!found) return;
+  // Added items: write the prices array straight into the added record.
+  if (isAdded(itemId)) {
+    const a = findAdded(itemId);
+    if (!a) return;
+    if (!Array.isArray(a.prices)) a.prices = [];
+    if (!a.prices[idx]) a.prices[idx] = { size: (found.item.prices && found.item.prices[idx] && found.item.prices[idx].size) || '', price: '' };
+    a.prices[idx].price = value;
+    markDirty();
+    return;
+  }
+  const base = found.item.prices || [];
+  const baseList = base.map(p => ({ size: p.size, price: p.price }));
+  const cur = state.overrides[itemId] || {};
+  const list = cur.prices ? cur.prices.map(p => ({ ...p })) : baseList.map(p => ({ ...p }));
+  if (!list[idx]) list[idx] = { size: (base[idx] && base[idx].size) || '', price: '' };
+  list[idx].price = value;
+  // If the resulting list equals the base, drop the override key.
+  if (isEqual(list, baseList)) {
+    delete cur.prices;
+  } else {
+    cur.prices = list;
+  }
+  if (Object.keys(cur).length === 0) delete state.overrides[itemId];
+  else state.overrides[itemId] = cur;
+  markDirty();
+}
+function clearItemOverrides(itemId) {
+  if (state.overrides[itemId]) {
+    delete state.overrides[itemId];
+    markDirty();
+    return true;
+  }
+  return false;
+}
+
+function markDirty() {
+  dirty = !isEqual(state, savedState);
+  updateBars();
+}
+
+function updateBars() {
+  const secs = mergedSections();
+  const totalItems = secs.reduce((n, s) => n + s.items.length, 0);
+  const hiddenCount = Object.values(state.hidden).filter(Boolean).length;
+  const editedCount = Object.keys(state.overrides).filter(k => Object.keys(state.overrides[k] || {}).length > 0).length;
+  const counts = document.getElementById('counts');
+  if (counts) counts.textContent = `${totalItems - hiddenCount} of ${totalItems} visible · ${editedCount} edited`;
+  const dirtyBadge = document.getElementById('dirty-badge');
+  if (dirtyBadge) dirtyBadge.style.display = dirty ? 'inline-flex' : 'none';
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) saveBtn.disabled = !dirty;
+}
+
+/* ── Admin UI ──────────────────────────────────────────────── */
+function renderAdmin() {
+  const cloudOn = isCloudConfigured();
+
+  const labelFor = k => k === 'sake' ? 'sake' : k === 'drink' ? 'drink' : 'dish';
+
+  const sectionsHtml = mergedSections().map(s => `
+    <div class="sec-block">
+      <div class="sec-title">
+        <div class="sec-title-name">${htmlEscape(s.name)} <span style="color:var(--muted); font-weight:400; font-size:13px;">${htmlEscape(s.subtitle || '')}</span></div>
+        <div class="sec-title-meta">${htmlEscape(s.number)} · ${s.items.length} item${s.items.length === 1 ? '' : 's'}</div>
+      </div>
+      <div class="sec-items" data-section-items="${htmlEscape(s.id)}">
+        ${orderedItems(s).map(it => renderItem(it, s)).join('')}
+      </div>
+      <button class="add-dish-btn" data-add-to="${htmlEscape(s.id)}" data-add-kind="${htmlEscape(s.kind)}">+ Add ${labelFor(s.kind)} to ${htmlEscape(s.name)}</button>
+    </div>
+  `).join('');
+
+  document.getElementById('page').innerHTML = `
+    <div class="h-eyebrow">Nobu-Ya · Admin</div>
+    <h1>Today’s menu</h1>
+    <p class="h-help">
+      Toggle items off to hide them from customers, or edit any field directly.
+      Changes apply ${cloudOn ? 'on every customer device after you save.' : 'on this device only — set up cloud sync to share with all customers.'}
+    </p>
+
+    <div class="status-bar">
+      <span class="badge ${cloudOn ? 'cloud' : 'local'}">
+        <span class="dot"></span>${cloudOn ? 'Cloud sync on' : 'Local only'}
+      </span>
+      <span class="badge dirty" id="dirty-badge" style="display:none;">
+        <span class="dot"></span>Unsaved
+      </span>
+      <span id="counts"></span>
+      <span style="margin-left:auto;">
+        <a href="index.html" target="_blank" style="color:var(--ink-soft); font-size:12px;">View menu →</a>
+      </span>
+    </div>
+
+    ${sectionsHtml}
+
+    <div class="actionbar">
+      <div class="actionbar-inner">
+        <button class="btn btn-warn" id="reset-all">Reset all edits</button>
+        <button class="btn btn-secondary" id="all-on">All available</button>
+        <button class="btn btn-primary" id="save-btn" disabled>Save changes</button>
+      </div>
+    </div>
+  `;
+  wireUpAdmin();
+  updateBars();
+}
+
+function renderItem(baseItem, section) {
+  const eff = effective(baseItem);
+  const isHidden = state.hidden[baseItem.id] === true;
+  const edited = hasOverride(baseItem.id);
+  const checked = isHidden ? '' : 'checked';
+  const thumb = eff.image ? `<img src="${htmlEscape(safeImageUrl(eff.image))}" alt="">` : '';
+
+  let bodyFields;
+  if (section.kind === 'sake') {
+    const basePrices = baseItem.prices || [];
+    const effPrices  = eff.prices       || basePrices;
+    bodyFields = `
+      <div class="field-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="field">
+          <label>Name</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="en" value="${htmlEscape(eff.en || '')}">
+        </div>
+        <div class="field jp">
+          <label>Japanese</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
+        </div>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea data-item="${htmlEscape(baseItem.id)}" data-field="desc">${htmlEscape(eff.desc || '')}</textarea>
+      </div>
+      <div class="field">
+        <label>Prices (${basePrices.map(p => htmlEscape(p.size)).join(' / ')})</label>
+        <div class="sake-prices-row">
+          ${basePrices.map((p, i) => `
+            <input data-item="${htmlEscape(baseItem.id)}" data-price-idx="${i}"
+                   placeholder="${htmlEscape(p.size)}"
+                   value="${htmlEscape((effPrices[i] && effPrices[i].price) || '')}">
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else if (section.kind === 'drink') {
+    bodyFields = `
+      <div class="field-grid">
+        <div class="field">
+          <label>Name</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="en" value="${htmlEscape(eff.en || '')}">
+        </div>
+        <div class="field">
+          <label>Price</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="price" value="${htmlEscape(eff.price || '')}">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field jp">
+          <label>Japanese</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
+        </div>
+        <div class="field">
+          <label>Sizes (under price, e.g. Small / Medium)</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="sizes" value="${htmlEscape(eff.sizes || '')}">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Category</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="category" value="${htmlEscape(eff.category || '')}">
+        </div>
+        <div class="field"></div>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea data-item="${htmlEscape(baseItem.id)}" data-field="desc">${htmlEscape(eff.desc || '')}</textarea>
+      </div>
+    `;
+  } else {
+    // dish
+    bodyFields = `
+      <div class="field-grid">
+        <div class="field">
+          <label>Name</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="en" value="${htmlEscape(eff.en || '')}">
+        </div>
+        <div class="field">
+          <label>Price</label>
+          <input data-item="${htmlEscape(baseItem.id)}" data-field="price" value="${htmlEscape(eff.price || '')}">
+        </div>
+      </div>
+      <div class="field jp">
+        <label>Japanese</label>
+        <input data-item="${htmlEscape(baseItem.id)}" data-field="jp" value="${htmlEscape(eff.jp || '')}">
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea data-item="${htmlEscape(baseItem.id)}" data-field="desc">${htmlEscape(eff.desc || '')}</textarea>
+      </div>
+      <div class="field">
+        <label>Image path (optional)</label>
+        <input data-item="${htmlEscape(baseItem.id)}" data-field="image" placeholder="Pictures/My Photo.png" value="${htmlEscape(eff.image || '')}">
+      </div>
+      ${PHOTO_WORKER_URL ? `
+      <div class="ai-photo" data-ai-for="${htmlEscape(baseItem.id)}">
+        <label class="ai-photo-btn">
+          <input type="file" accept="image/*" data-ai-file="${htmlEscape(baseItem.id)}" hidden>
+          <span>📷 Tidy a chef photo with AI</span>
+        </label>
+        <span class="ai-photo-status" data-ai-status="${htmlEscape(baseItem.id)}"></span>
+      </div>` : ''}
+    `;
+  }
+
+  const added = baseItem._added === true || isAdded(baseItem.id);
+  const actionLink = added
+    ? `<a data-delete-item="${htmlEscape(baseItem.id)}" style="color:var(--off);">Delete</a>`
+    : `<a data-reset-item="${htmlEscape(baseItem.id)}" style="${edited ? '' : 'visibility:hidden;'}">Reset to default</a>`;
+
+  return `
+    <div class="item ${isHidden ? 'is-hidden' : ''} ${edited ? 'is-edited' : ''} ${added ? 'is-added' : ''}" data-item-row="${htmlEscape(baseItem.id)}">
+      <div class="reorder">
+        <button class="reorder-btn" data-move="up" data-move-id="${htmlEscape(baseItem.id)}" data-move-section="${htmlEscape(section.id)}" title="Move up" aria-label="Move up">▲</button>
+        <button class="reorder-btn" data-move="down" data-move-id="${htmlEscape(baseItem.id)}" data-move-section="${htmlEscape(section.id)}" title="Move down" aria-label="Move down">▼</button>
+      </div>
+      <div class="item-thumb">${thumb}</div>
+      <div class="item-head">
+        <span class="item-id">${added ? 'NEW · ' : ''}${htmlEscape(baseItem.id)}</span>
+        <span class="item-edited-badge ${edited ? '' : 'hidden-vis'}" data-edited-badge="${htmlEscape(baseItem.id)}">edited</span>
+      </div>
+      <label class="toggle" aria-label="Available today">
+        <input type="checkbox" ${checked} data-toggle-id="${htmlEscape(baseItem.id)}">
+        <span class="track"></span>
+        <span class="knob"></span>
+      </label>
+      <div class="item-body">
+        ${bodyFields}
+        <div class="item-actions">
+          ${actionLink}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function refreshItemRow(itemId) {
+  const row = document.querySelector(`[data-item-row="${itemId}"]`);
+  if (!row) return;
+  const edited = hasOverride(itemId);
+  row.classList.toggle('is-edited', edited);
+  const badge = document.querySelector(`[data-edited-badge="${itemId}"]`);
+  if (badge) badge.classList.toggle('hidden-vis', !edited);
+  const resetLink = document.querySelector(`[data-reset-item="${itemId}"]`);
+  if (resetLink) resetLink.style.visibility = edited ? 'visible' : 'hidden';
+}
+
+function wireUpAdmin() {
+  // Toggles (visibility)
+  document.querySelectorAll('[data-toggle-id]').forEach(input => {
+    input.addEventListener('change', () => {
+      const id = input.dataset.toggleId;
+      if (input.checked) delete state.hidden[id];
+      else               state.hidden[id] = true;
+      const row = input.closest('.item');
+      if (row) row.classList.toggle('is-hidden', !input.checked);
+      markDirty();
+    });
+  });
+
+  // Field edits (text inputs + textareas)
+  document.querySelectorAll('[data-item][data-field]').forEach(input => {
+    input.addEventListener('input', () => {
+      setOverrideField(input.dataset.item, input.dataset.field, input.value);
+      refreshItemRow(input.dataset.item);
+    });
+  });
+
+  // Sake price edits
+  document.querySelectorAll('[data-item][data-price-idx]').forEach(input => {
+    input.addEventListener('input', () => {
+      setOverridePrice(input.dataset.item, Number(input.dataset.priceIdx), input.value);
+      refreshItemRow(input.dataset.item);
+    });
+  });
+
+  // Per-item reset
+  document.querySelectorAll('[data-reset-item]').forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.dataset.resetItem;
+      if (!hasOverride(id)) return;
+      if (!confirm('Reset this item to the original menu values?')) return;
+      clearItemOverrides(id);
+      renderAdmin();
+    });
+  });
+
+  // Add new item to a section (kind-aware: dish / sake / drink)
+  document.querySelectorAll('[data-add-to]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sectionId = btn.dataset.addTo;
+      const kind = btn.dataset.addKind || 'dish';
+      const id = 'new-' + Date.now().toString(36);
+      let rec;
+      if (kind === 'sake') {
+        // Mirror the four standard sake price columns.
+        const sec = MENU.sections.find(s => s.id === sectionId);
+        const sizes = (sec && sec.items[0] && sec.items[0].prices)
+          ? sec.items[0].prices.map(p => p.size)
+          : ['120ml', '180ml', '360ml', '720ml'];
+        rec = { id, sectionId, kind, en: '', jp: '', desc: '', prices: sizes.map(size => ({ size, price: '' })) };
+      } else if (kind === 'drink') {
+        rec = { id, sectionId, kind, en: '', jp: '', desc: '', price: '', sizes: '', category: '' };
+      } else {
+        rec = { id, sectionId, kind: 'dish', en: '', jp: '', desc: '', price: '', image: '' };
+      }
+      state.added.push(rec);
+      // Place the new item at the end of this section's saved order.
+      const sec = mergedSections().find(s => s.id === sectionId);
+      if (sec) state.order[sectionId] = orderedItems(sec).map(it => it.id);
+      markDirty();
+      renderAdmin();
+      requestAnimationFrame(() => {
+        const row = document.querySelector(`[data-item-row="${id}"]`);
+        if (row) {
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const name = row.querySelector('[data-field="en"]');
+          if (name) name.focus();
+        }
+      });
+    });
+  });
+
+  // Delete an added item
+  document.querySelectorAll('[data-delete-item]').forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.dataset.deleteItem;
+      if (!confirm('Delete this new item? This cannot be undone after saving.')) return;
+      state.added = state.added.filter(a => a.id !== id);
+      delete state.hidden[id];
+      delete state.overrides[id];
+      Object.keys(state.order).forEach(secId => {
+        state.order[secId] = (state.order[secId] || []).filter(x => x !== id);
+      });
+      markDirty();
+      renderAdmin();
+    });
+  });
+
+  // Reorder via up/down arrows
+  wireReorder();
+
+  // AI photo pipeline
+  document.querySelectorAll('[data-ai-file]').forEach(input => {
+    input.addEventListener('change', () => handleAiPhoto(input));
+  });
+
+  // "All available"
+  document.getElementById('all-on').addEventListener('click', () => {
+    if (Object.keys(state.hidden).length === 0) {
+      showToast('Already all available');
+      return;
+    }
+    if (!confirm('Mark every item as available today?')) return;
+    state.hidden = {};
+    document.querySelectorAll('[data-toggle-id]').forEach(input => {
+      input.checked = true;
+      const row = input.closest('.item');
+      if (row) row.classList.remove('is-hidden');
+    });
+    markDirty();
+  });
+
+  // "Reset all edits"
+  document.getElementById('reset-all').addEventListener('click', () => {
+    const editedCount = Object.keys(state.overrides).length;
+    if (editedCount === 0) {
+      showToast('No edits to reset');
+      return;
+    }
+    if (!confirm(`Reset all ${editedCount} edited item${editedCount === 1 ? '' : 's'} to original menu values?`)) return;
+    state.overrides = {};
+    renderAdmin(); // full re-render is simplest
+  });
+
+  // Save
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      await saveState();
+      savedState = deepClone(state);
+      dirty = false;
+      updateBars();
+      showToast(isCloudConfigured() ? 'Saved & synced' : 'Saved (this device)');
+    } catch (e) {
+      console.error(e);
+      showToast('Save failed: ' + e.message, 'error');
+    } finally {
+      btn.textContent = 'Save changes';
+      // updateBars sets disabled correctly based on dirty
+    }
+  });
+
+  // Warn before leaving with unsaved edits
+  window.addEventListener('beforeunload', (e) => {
+    if (dirty) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+}
+
+/* ── AI photo pipeline ─────────────────────────────────────── */
+function getAdminPassword() {
+  // The password the operator signed in with this session.
+  return sessionStorage.getItem('nby:admin-pw') || MENU.admin.password;
+}
+
+async function handleAiPhoto(input) {
+  const id = input.dataset.aiFile;
+  const file = input.files && input.files[0];
+  input.value = ''; // allow re-selecting the same file later
+  if (!file) return;
+
+  const statusEl = document.querySelector(`[data-ai-status="${id}"]`);
+  const setStatus = (msg, cls) => {
+    if (statusEl) { statusEl.textContent = msg; statusEl.className = 'ai-photo-status' + (cls ? ' ' + cls : ''); }
+  };
+
+  if (!PHOTO_WORKER_URL) { setStatus('Worker URL not set in admin.html', 'err'); return; }
+  if (file.size > 8 * 1024 * 1024) { setStatus('Image too large (max 8MB)', 'err'); return; }
+
+  setStatus('Uploading & editing… (~15–30s)', 'busy');
+
+  try {
+    const base64 = await fileToBase64(file);
+    const r = await fetch(PHOTO_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        password: getAdminPassword(),
+        imageBase64: base64,
+        mimeType: file.type || 'image/jpeg',
+        dishId: id,
+      }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.ok) {
+      throw new Error(data.error || ('HTTP ' + r.status));
+    }
+
+    // Write the committed path into the image field + override/added record.
+    setOverrideField(id, 'image', data.path);
+    const imgInput = document.querySelector(`[data-item="${id}"][data-field="image"]`);
+    if (imgInput) imgInput.value = data.path;
+
+    // Update the thumbnail with the returned preview immediately.
+    const row = document.querySelector(`[data-item-row="${id}"]`);
+    const thumb = row && row.querySelector('.item-thumb');
+    if (thumb && data.preview) thumb.innerHTML = `<img src="${data.preview}" alt="">`;
+
+    refreshItemRow(id);
+    setStatus('Done — committed to repo. Press Save changes.', 'ok');
+  } catch (e) {
+    console.error(e);
+    setStatus('Failed: ' + e.message, 'err');
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(String(fr.result).split(',')[1]);
+    fr.onerror = () => rej(new Error('Could not read file'));
+    fr.readAsDataURL(file);
+  });
+}
+
+/* ── Reorder via up/down arrows ────────────────────────────── */
+function wireReorder() {
+  document.querySelectorAll('[data-move]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      moveItem(btn.dataset.moveSection, btn.dataset.moveId, btn.dataset.move);
+    });
+  });
+}
+
+function moveItem(sectionId, itemId, direction) {
+  const sec = mergedSections().find(s => s.id === sectionId);
+  if (!sec) return;
+  // Start from the current effective order and normalize it into state.
+  const ids = orderedItems(sec).map(it => it.id);
+  const i = ids.indexOf(itemId);
+  if (i === -1) return;
+  const j = direction === 'up' ? i - 1 : i + 1;
+  if (j < 0 || j >= ids.length) return; // already at an edge
+  [ids[i], ids[j]] = [ids[j], ids[i]];
+  state.order[sectionId] = ids;
+  markDirty();
+  renderAdmin();
+  // keep the moved row in view after re-render
+  requestAnimationFrame(() => {
+    const row = document.querySelector(`[data-item-row="${itemId}"]`);
+    if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+async function mountAdmin() {
+  document.getElementById('page').innerHTML =
+    '<div style="text-align:center; color:var(--muted); margin-top:40vh; font-family:\'JetBrains Mono\',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;">Loading…</div>';
+  state = await loadState();
+  savedState = deepClone(state);
+  dirty = false;
+  renderAdmin();
+}
+
+(function init() {
+  if (!window.MENU) {
+    document.getElementById('page').innerHTML =
+      '<div style="padding:40px; text-align:center; color:var(--off);">menu.js failed to load</div>';
+    return;
+  }
+  if (!isAuthed()) renderLogin();
+  else mountAdmin();
+})();
+</script>
+</body>
+</html>
