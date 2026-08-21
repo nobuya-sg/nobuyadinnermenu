@@ -769,6 +769,18 @@ function renderItem(baseItem, section) {
           `).join('')}
         </div>
       </div>
+      <div class="field">
+        <label>Image path (optional)</label>
+        <input data-item="${htmlEscape(baseItem.id)}" data-field="image" placeholder="Pictures/kinoene.jpeg" value="${htmlEscape(eff.image || '')}">
+      </div>
+      ${PHOTO_WORKER_URL ? `
+      <div class="ai-photo" data-ai-for="${htmlEscape(baseItem.id)}">
+        <label class="ai-photo-btn">
+          <input type="file" accept="image/*" data-ai-file="${htmlEscape(baseItem.id)}" hidden>
+          <span>📷 Tidy a bottle photo with AI</span>
+        </label>
+        <span class="ai-photo-status" data-ai-status="${htmlEscape(baseItem.id)}"></span>
+      </div>` : ''}
     `;
   } else if (section.kind === 'drink') {
     bodyFields = `
