@@ -182,7 +182,8 @@
     width: 100%; height: 100%; object-fit: cover;
     display: block;
   }
-  .dish-photo .placeholder-tag {
+  .dish-photo .placeholder-tag,
+  .sake-photo .placeholder-tag {
     position: absolute; inset: 0; margin: auto;
     width: max-content; height: max-content;
     display: flex; align-items: center;
@@ -289,10 +290,32 @@
 
   /* ── Sake item ───────────────────────────────────────────── */
   .sake {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
     padding: 18px 28px 20px;
     border-bottom: 1px solid var(--hair);
   }
   .sake:last-child { border-bottom: none; }
+  .sake-photo {
+    flex: 0 0 76px; width: 76px;
+    aspect-ratio: 2 / 3;
+    overflow: hidden; position: relative;
+    background:
+      repeating-linear-gradient(135deg,
+        var(--bg-alt) 0px, var(--bg-alt) 10px,
+        var(--bg-alt-2) 10px, var(--bg-alt-2) 20px);
+  }
+  .sake-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .sake-photo .placeholder-tag {
+    padding: 4px 7px;
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+  .sake-body { flex: 1; min-width: 0; }
   .sake-name {
     font-size: 15px; font-weight: 500;
     letter-spacing: -0.2px; color: var(--ink);
@@ -584,12 +607,18 @@ function renderSakeItem(item) {
       <div class="sake-price">${htmlEscape(p.price)}</div>
     </div>
   `).join('');
+  const photo = item.image
+    ? `<img src="${htmlEscape(safeImageUrl(item.image))}" alt="${htmlEscape(item.en)}" loading="lazy">`
+    : `<span class="placeholder-tag">photo</span>`;
   return `
     <div class="sake">
-      <div class="sake-name">${htmlEscape(item.en)}</div>
-      ${item.jp   ? `<div class="sake-jp">${htmlEscape(item.jp)}</div>`     : ''}
-      ${item.desc ? `<div class="sake-desc">${htmlEscape(item.desc)}</div>` : ''}
-      <div class="sake-prices">${cells}</div>
+      <div class="sake-photo">${photo}</div>
+      <div class="sake-body">
+        <div class="sake-name">${htmlEscape(item.en)}</div>
+        ${item.jp   ? `<div class="sake-jp">${htmlEscape(item.jp)}</div>`     : ''}
+        ${item.desc ? `<div class="sake-desc">${htmlEscape(item.desc)}</div>` : ''}
+        <div class="sake-prices">${cells}</div>
+      </div>
     </div>
   `;
 }
